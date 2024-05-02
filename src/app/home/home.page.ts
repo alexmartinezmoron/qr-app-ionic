@@ -7,6 +7,7 @@ import { BarcodeScanningModalComponent } from './barcode-scanning-modal.componen
 import { LensFacing, BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
 import { Clipboard } from '@capacitor/clipboard';
 import { Browser } from '@capacitor/browser';
+import { FilePicker } from '@capawesome/capacitor-file-picker';
 
 @Component({
   selector: 'app-home',
@@ -60,6 +61,22 @@ export class HomePage implements OnInit{
   
   }
 
+   // === Leer QR desde una imagen y guarda el resultado en la variable scanResult ===
+
+   async readBarcodeFromImage(){   
+      const {files} = await FilePicker.pickImages({multiple: false});
+
+      //Permitimos el path nulo por que el usuario puede cancelar la selección de la imagen
+      const path = files[0]?.path;
+      // Si no hay archivos, salimos
+      if(!path) return;
+      
+      const {barcodes} = await BarcodeScanner.readBarcodesFromImage({
+        path,
+        formats: []
+      })
+    this.scanResult = barcodes[0].displayValue;
+   }
 
   // === Capture HTML Element, convert it to canvas and get an image ===
 
